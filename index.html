@@ -3170,14 +3170,16 @@
       a.classList.toggle('active', isActive);
       if (isActive) activeLink = a;
     });
-    // 年リンクコンテナ内で active がはみ出していたらスクロール
+    // active 年を年リンクバーの中央付近に来るよう必ずスクロール
+    // offsetLeft は offsetParent (NAV) 基準のため使えない。
+    // getBoundingClientRect から正確な container 内位置を算出。
     if (activeLink && yearLinksContainer) {
       const linkRect = activeLink.getBoundingClientRect();
       const containerRect = yearLinksContainer.getBoundingClientRect();
-      if (linkRect.left < containerRect.left || linkRect.right > containerRect.right) {
-        const targetScroll = activeLink.offsetLeft - (yearLinksContainer.clientWidth - activeLink.offsetWidth) / 2;
-        yearLinksContainer.scrollTo({ left: targetScroll, behavior: 'smooth' });
-      }
+      const linkLeftInContainer = linkRect.left - containerRect.left + yearLinksContainer.scrollLeft;
+      const targetScroll = linkLeftInContainer - (yearLinksContainer.clientWidth - linkRect.width) / 2;
+      const maxScroll = yearLinksContainer.scrollWidth - yearLinksContainer.clientWidth;
+      yearLinksContainer.scrollLeft = Math.max(0, Math.min(targetScroll, maxScroll));
     }
   }
 
