@@ -3088,10 +3088,18 @@
 		</section>
 		</a>
 
+		<footer>
+			<div class="container">
+				&copy; <span id="copyright-year"></span> アウルバンド. All Rights Reserved.
+			</div>
+		</footer>
+
 <script>
   const d = new Date();
   document.getElementById('today-date').textContent =
     d.getFullYear() + '/' + (d.getMonth()+1) + '/' + d.getDate();
+  const copyrightYearEl = document.getElementById('copyright-year');
+  if (copyrightYearEl) copyrightYearEl.textContent = d.getFullYear();
 
   // 内容のないイベントは開閉できないようにする
   document.querySelectorAll('details').forEach(details => {
