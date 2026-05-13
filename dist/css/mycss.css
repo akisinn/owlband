@@ -4,11 +4,13 @@
 
 body {
   font-size: 16px;
-  font-family: Verdana, sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", "Hiragino Sans", "Hiragino Kaku Gothic ProN", "Yu Gothic", "Meiryo", sans-serif;
   margin: 0;
   padding: 0;
-  color: #333;
-  background: #f8f8f8;
+  color: #1a1a1a;
+  background: #fafafa;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 p {
@@ -206,7 +208,7 @@ summary.tl-title:hover h2 {
 }
 
 section.l .tl-body ul:not(.head) {
-  border-left-color: #e8b070;
+  border-left-color: #1a1a1a;
 }
 
 /* 年ヘッダー */
@@ -215,17 +217,17 @@ section.l .tl-body ul:not(.head) {
   position: sticky;
   top: 68px;
   z-index: 50;
-  background: #f0f0f0;
-  border-top: 3px solid #ccc;
-  border-bottom: 1px solid #ddd;
+  background: #1a1a1a;
+  border-top: none;
+  border-bottom: none;
 }
 
 .year-divider .container {
   font-size: 1.5em;
   font-weight: 900;
-  color: #bbb;
-  padding: 4px 0;
-  letter-spacing: 0.04em;
+  color: #ffffff;
+  padding: 6px 0;
+  letter-spacing: 0.06em;
   display: flex;
   align-items: baseline;
   gap: 10px;
@@ -234,22 +236,23 @@ section.l .tl-body ul:not(.head) {
 .live-count {
   font-size: 0.5em;
   font-weight: 600;
-  color: #bbb;
-  letter-spacing: 0.02em;
+  color: #bdbdbd;
+  letter-spacing: 0.08em;
   position: relative;
   bottom: 4px;
+  text-transform: uppercase;
 }
 
 section.l summary.tl-title h2::before {
   content: 'LIVE';
   display: inline-block;
-  background: #e8a040;
+  background: #1a1a1a;
   color: #fff;
   font-size: 0.58em;
   font-weight: bold;
-  letter-spacing: 0.06em;
-  padding: 2px 5px;
-  border-radius: 3px;
+  letter-spacing: 0.08em;
+  padding: 2px 6px;
+  border-radius: 2px;
   margin-right: 7px;
   vertical-align: middle;
   position: relative;
@@ -257,48 +260,49 @@ section.l summary.tl-title h2::before {
 }
 
 section.l {
-  background: #fffdf5;
+  background: #f5f5f5;
 }
 
 section.l .tl-body {
-  background: #fffef5;
-  border-color: #ebebeb;
-  border-left-color: #e8a040;
+  background: #fafafa;
+  border-color: #e5e5e5;
+  border-left-color: #1a1a1a;
 }
 
 section.special summary.tl-title h2::before {
   content: 'LIVE';
   display: inline-block;
-  background: #d04040;
+  background: #1a1a1a;
   color: #fff;
   font-size: 0.58em;
   font-weight: bold;
-  letter-spacing: 0.06em;
-  padding: 2px 5px;
-  border-radius: 3px;
+  letter-spacing: 0.08em;
+  padding: 2px 6px;
+  border-radius: 2px;
   margin-right: 7px;
   vertical-align: middle;
   position: relative;
   top: -1px;
+  box-shadow: 0 0 0 2px #fff, 0 0 0 3px #1a1a1a;
 }
 
 section.special {
-  background: #fff5f5;
+  background: #ededed;
 }
 
 section.special .tl-body {
-  background: #fff5f5;
-  border-left-color: #d04040;
+  background: #f0f0f0;
+  border-left-color: #1a1a1a;
 }
 
 section.yokoku {
-  background: #fff8fa;
+  background: #f5f5f5;
 }
 
 section.yokoku .tl-body {
-  background: #fff8fa;
-  border-color: #ebebeb;
-  border-left-color: #e080a0;
+  background: #fafafa;
+  border-color: #e5e5e5;
+  border-left-color: #888888;
 }
 
 .maru {
@@ -558,8 +562,8 @@ header h1 {
 /* 年ナビゲーション */
 
 .year-nav {
-  background: #fff;
-  border-bottom: 1px solid #e0e0e0;
+  background: #ffffff;
+  border-bottom: 1px solid #e5e5e5;
   padding: 8px 0;
   position: sticky;
   top: 0;
@@ -594,9 +598,9 @@ header h1 {
 }
 
 .year-scroll-btn:hover {
-  background: #555;
+  background: #1a1a1a;
   color: #fff;
-  border-color: #555;
+  border-color: #1a1a1a;
 }
 
 .year-links {
@@ -646,15 +650,15 @@ header h1 {
 .year-nav a:hover,
 .year-nav button:hover,
 .year-nav .nav-btn:hover {
-  background: #555;
+  background: #1a1a1a;
   color: #fff;
-  border-color: #555;
+  border-color: #1a1a1a;
 }
 
 .year-links a.active {
-  background: #555;
+  background: #1a1a1a;
   color: #fff;
-  border-color: #555;
+  border-color: #1a1a1a;
 }
 
 /* footer */
