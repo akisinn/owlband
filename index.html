@@ -25,7 +25,7 @@
 <body>
 		<header>
 			<div class="container">
-				<h1><img src="favicon.png" alt="" style="height: 1.4em; vertical-align: -0.4em; margin-right: 0.3em;">アウルバンド年表</h1>
+				<h1><img src="favicon.png" alt="" style="height: 1.6em; vertical-align: -0.35em; margin-right: 0.3em;">アウルバンド年表</h1>
 			</div>
 		</header>
 
@@ -3122,13 +3122,23 @@
 
   function updateActiveYear() {
     const triggerY = (yearNav ? yearNav.offsetHeight : 0) + 10;
+    const dividers = document.querySelectorAll('.year-divider');
     let currentYear = null;
-    document.querySelectorAll('.year-divider').forEach(divider => {
+    dividers.forEach(divider => {
       if (divider.getBoundingClientRect().top <= triggerY) {
         const m = divider.textContent.match(/\d{4}/);
         if (m) currentYear = m[0];
       }
     });
+    // ページ最下部にいる場合は、最後の年を強制的にアクティブに
+    // （最後の年区切りがまだトリガーラインに到達していなくても）
+    const scrollBottom = window.innerHeight + window.scrollY;
+    const docHeight = document.documentElement.scrollHeight;
+    if (scrollBottom >= docHeight - 50 && dividers.length > 0) {
+      const lastDivider = dividers[dividers.length - 1];
+      const m = lastDivider.textContent.match(/\d{4}/);
+      if (m) currentYear = m[0];
+    }
     if (currentYear) setActiveYear(currentYear);
   }
 
