@@ -3170,6 +3170,33 @@
     if (scrollEndTimer) clearTimeout(scrollEndTimer);
     scrollEndTimer = setTimeout(updateActiveYear, 120);
   }, { passive: true });
+
+  // 保険1: scrollend (Brave/Chrome 等) でも再評価
+  window.addEventListener('scrollend', updateActiveYear, { passive: true });
+
+  // 保険2: ハッシュ変更（アンカージャンプ）後に再評価
+  window.addEventListener('hashchange', () => {
+    setTimeout(updateActiveYear, 50);
+    setTimeout(updateActiveYear, 350);
+  });
+
+  // 保険3: ナビゲーション内のリンククリック後に再評価
+  document.querySelectorAll('.nav-actions a, .year-links a').forEach(a => {
+    a.addEventListener('click', () => {
+      setTimeout(updateActiveYear, 50);
+      setTimeout(updateActiveYear, 350);
+    });
+  });
+
+  // 保険4: スクロールイベントを取り逃したケースのための定期チェック
+  let lastObservedScrollY = -1;
+  setInterval(() => {
+    if (window.scrollY !== lastObservedScrollY) {
+      lastObservedScrollY = window.scrollY;
+      updateActiveYear();
+    }
+  }, 250);
+
   updateActiveYear();
 
   // 年ヘッダーのライブ回数を自動計算
