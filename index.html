@@ -3088,7 +3088,6 @@
 		</section>
 		</a>
 
-	<script src="dist/js/myjs.js"></script>
 <script>
   const d = new Date();
   document.getElementById('today-date').textContent =
@@ -3121,39 +3120,37 @@
   updateNavHeight();
 
   // 年区切りの自然な文書位置をキャッシュ
-  // （sticky 要素は scroll 時に offsetTop が stuck 位置を返すため、スクロール前にキャッシュ）
+  // sticky 要素は scroll 時に offsetTop / getBoundingClientRect が stuck 位置を返してしまうため、
+  // 直後の sticky でない section の offsetTop から年区切りの自然な top を逆算する。
+  // この方法ならスクロール状態に関係なくいつでも正確に計算できる。
   const dividerPositions = new Map();
-  let suppressActiveUpdate = false;
   function cacheDividerPositions() {
-    const savedScrollY = window.scrollY;
-    if (savedScrollY > 0) {
-      suppressActiveUpdate = true;
-      window.scrollTo(0, 0);
-    }
     document.querySelectorAll('.year-divider').forEach(d => {
-      if (d.id) dividerPositions.set(d.id, d.offsetTop);
+      if (!d.id) return;
+      const nextSection = d.nextElementSibling;
+      if (nextSection && nextSection.tagName === 'SECTION') {
+        // section.offsetTop = 年区切りの自然な下端
+        // 年区切りの自然な top = section.offsetTop - 年区切りの高さ
+        dividerPositions.set(d.id, nextSection.offsetTop - d.offsetHeight);
+      } else {
+        dividerPositions.set(d.id, d.offsetTop);
+      }
     });
-    if (savedScrollY > 0) {
-      window.scrollTo(0, savedScrollY);
-      // restore 後の scroll event が落ち着くまで待ってから抑制解除
-      setTimeout(() => { suppressActiveUpdate = false; }, 50);
-    }
   }
   cacheDividerPositions();
 
-  // 念のため遅延再キャッシュ（フォント読み込み・レイアウト確定後）
+  // フォント読み込み完了・遅延後に再キャッシュ
   setTimeout(cacheDividerPositions, 500);
   setTimeout(cacheDividerPositions, 1500);
   if (document.fonts && document.fonts.ready) {
     document.fonts.ready.then(() => { updateNavHeight(); cacheDividerPositions(); });
   }
 
-  // year-nav の高さ変化を監視（フォント読み込み・リサイズに対応）
+  // year-nav の高さ変化を監視
   if (window.ResizeObserver && yearNav) {
     let roFirstSkipped = false;
     new ResizeObserver(() => {
       updateNavHeight();
-      // 初回呼び出しは observe 開始時に発火するのでスキップ
       if (!roFirstSkipped) { roFirstSkipped = true; return; }
       cacheDividerPositions();
     }).observe(yearNav);
@@ -3185,7 +3182,6 @@
   }
 
   function updateActiveYear() {
-    if (suppressActiveUpdate) return;
     const triggerY = (yearNav ? yearNav.offsetHeight : 0) + 10;
     const dividers = document.querySelectorAll('.year-divider');
     if (dividers.length === 0) return;
