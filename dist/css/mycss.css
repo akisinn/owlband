@@ -99,6 +99,19 @@ summary.tl-title:hover h2 {
   color: #222;
 }
 
+/* 内容のないイベントは開閉不可（シェブロン非表示・カーソルを変更） */
+details.no-content > summary.tl-title {
+  cursor: default;
+}
+
+details.no-content > summary.tl-title::after {
+  display: none;
+}
+
+details.no-content > summary.tl-title:hover h2 {
+  color: #444;
+}
+
 /* 本文カード */
 .tl-body {
   background: #fafafa;
