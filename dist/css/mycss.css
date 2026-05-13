@@ -685,6 +685,22 @@ header h1 {
   color: #ffffff;
 }
 
+/* ナビゲーションアイコン */
+.nav-icon {
+  width: 13px;
+  height: 13px;
+  vertical-align: -2px;
+  margin-right: 6px;
+  flex-shrink: 0;
+}
+
+.nav-actions a,
+.nav-actions button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
 /* footer */
 
 footer {
