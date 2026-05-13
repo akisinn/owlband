@@ -3094,19 +3094,55 @@
   document.getElementById('today-date').textContent =
     d.getFullYear() + '/' + (d.getMonth()+1) + '/' + d.getDate();
 
-  // 現在表示中の年リンクをハイライト
+  // 現在表示中の年リンクをハイライト（スクロール位置で判定 + 年リンクを自動スクロール）
   const yearLinks = document.querySelectorAll('.year-links a');
-  const yearSections = document.querySelectorAll('[id^="y"]');
-  const observer = new IntersectionObserver(entries => {
-    entries.forEach(entry => {
-      if (entry.isIntersecting) {
-        yearLinks.forEach(a => {
-          a.classList.toggle('active', a.getAttribute('href') === '#' + entry.target.id);
-        });
+  const yearLinksContainer = document.getElementById('yearLinks');
+  const yearNav = document.querySelector('.year-nav');
+  let lastActiveYear = null;
+
+  function setActiveYear(yearText) {
+    if (yearText === lastActiveYear) return;
+    lastActiveYear = yearText;
+    let activeLink = null;
+    yearLinks.forEach(a => {
+      const isActive = a.textContent.trim() === yearText;
+      a.classList.toggle('active', isActive);
+      if (isActive) activeLink = a;
+    });
+    // 年リンクコンテナ内で active がはみ出していたらスクロール
+    if (activeLink && yearLinksContainer) {
+      const linkRect = activeLink.getBoundingClientRect();
+      const containerRect = yearLinksContainer.getBoundingClientRect();
+      if (linkRect.left < containerRect.left || linkRect.right > containerRect.right) {
+        const targetScroll = activeLink.offsetLeft - (yearLinksContainer.clientWidth - activeLink.offsetWidth) / 2;
+        yearLinksContainer.scrollTo({ left: targetScroll, behavior: 'smooth' });
+      }
+    }
+  }
+
+  function updateActiveYear() {
+    const triggerY = (yearNav ? yearNav.offsetHeight : 0) + 10;
+    let currentYear = null;
+    document.querySelectorAll('.year-divider').forEach(divider => {
+      if (divider.getBoundingClientRect().top <= triggerY) {
+        const m = divider.textContent.match(/\d{4}/);
+        if (m) currentYear = m[0];
       }
     });
-  }, { rootMargin: '-10% 0px -80% 0px' });
-  yearSections.forEach(el => observer.observe(el));
+    if (currentYear) setActiveYear(currentYear);
+  }
+
+  let scrollScheduled = false;
+  window.addEventListener('scroll', () => {
+    if (!scrollScheduled) {
+      scrollScheduled = true;
+      requestAnimationFrame(() => {
+        updateActiveYear();
+        scrollScheduled = false;
+      });
+    }
+  }, { passive: true });
+  updateActiveYear();
 
   // 年ヘッダーのライブ回数を自動計算
   document.querySelectorAll('.year-divider').forEach(divider => {
