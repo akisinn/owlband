@@ -3119,40 +3119,50 @@
     document.documentElement.style.setProperty('--nav-height', yearNav.offsetHeight + 'px');
   }
   updateNavHeight();
-  if (window.ResizeObserver && yearNav) {
-    new ResizeObserver(updateNavHeight).observe(yearNav);
-  } else {
-    window.addEventListener('resize', updateNavHeight);
-    if (document.fonts && document.fonts.ready) {
-      document.fonts.ready.then(updateNavHeight);
-    }
-  }
 
   // 年区切りの自然な文書位置をキャッシュ
-  // （sticky 要素は scroll 時に offsetTop / getBoundingClientRect が
-  // stuck 位置を返してしまうため、スクロール前にキャッシュする必要がある）
+  // （sticky 要素は scroll 時に offsetTop が stuck 位置を返すため、スクロール前にキャッシュ）
   const dividerPositions = new Map();
+  let suppressActiveUpdate = false;
   function cacheDividerPositions() {
-    const wasScrolled = window.scrollY > 0;
     const savedScrollY = window.scrollY;
-    if (wasScrolled) {
-      // 一時的にトップへ戻して正確な位置を取得
-      window.scrollTo({ top: 0, behavior: 'instant' });
+    if (savedScrollY > 0) {
+      suppressActiveUpdate = true;
+      window.scrollTo(0, 0);
     }
     document.querySelectorAll('.year-divider').forEach(d => {
       if (d.id) dividerPositions.set(d.id, d.offsetTop);
     });
-    if (wasScrolled) {
-      window.scrollTo({ top: savedScrollY, behavior: 'instant' });
+    if (savedScrollY > 0) {
+      window.scrollTo(0, savedScrollY);
+      // restore 後の scroll event が落ち着くまで待ってから抑制解除
+      setTimeout(() => { suppressActiveUpdate = false; }, 50);
     }
   }
   cacheDividerPositions();
-  // リサイズ時に再キャッシュ
-  let resizeCacheTimer = null;
-  window.addEventListener('resize', () => {
-    if (resizeCacheTimer) clearTimeout(resizeCacheTimer);
-    resizeCacheTimer = setTimeout(cacheDividerPositions, 300);
-  });
+
+  // 念のため遅延再キャッシュ（フォント読み込み・レイアウト確定後）
+  setTimeout(cacheDividerPositions, 500);
+  setTimeout(cacheDividerPositions, 1500);
+  if (document.fonts && document.fonts.ready) {
+    document.fonts.ready.then(() => { updateNavHeight(); cacheDividerPositions(); });
+  }
+
+  // year-nav の高さ変化を監視（フォント読み込み・リサイズに対応）
+  if (window.ResizeObserver && yearNav) {
+    let roFirstSkipped = false;
+    new ResizeObserver(() => {
+      updateNavHeight();
+      // 初回呼び出しは observe 開始時に発火するのでスキップ
+      if (!roFirstSkipped) { roFirstSkipped = true; return; }
+      cacheDividerPositions();
+    }).observe(yearNav);
+  } else {
+    window.addEventListener('resize', () => {
+      updateNavHeight();
+      cacheDividerPositions();
+    });
+  }
 
   function setActiveYear(yearText) {
     if (yearText === lastActiveYear) return;
@@ -3175,6 +3185,7 @@
   }
 
   function updateActiveYear() {
+    if (suppressActiveUpdate) return;
     const triggerY = (yearNav ? yearNav.offsetHeight : 0) + 10;
     const dividers = document.querySelectorAll('.year-divider');
     if (dividers.length === 0) return;
