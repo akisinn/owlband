@@ -3123,7 +3123,9 @@
   function updateActiveYear() {
     const triggerY = (yearNav ? yearNav.offsetHeight : 0) + 10;
     const dividers = document.querySelectorAll('.year-divider');
-    let currentYear = null;
+    if (dividers.length === 0) return;
+    // デフォルトを最初の年に（最初の年区切りがまだトリガーラインに到達していない場合の対応）
+    let currentYear = (dividers[0].textContent.match(/\d{4}/) || [])[0] || null;
     dividers.forEach(divider => {
       if (divider.getBoundingClientRect().top <= triggerY) {
         const m = divider.textContent.match(/\d{4}/);
@@ -3134,9 +3136,8 @@
     // （最後の年区切りがまだトリガーラインに到達していなくても）
     const scrollBottom = window.innerHeight + window.scrollY;
     const docHeight = document.documentElement.scrollHeight;
-    if (scrollBottom >= docHeight - 50 && dividers.length > 0) {
-      const lastDivider = dividers[dividers.length - 1];
-      const m = lastDivider.textContent.match(/\d{4}/);
+    if (scrollBottom >= docHeight - 50) {
+      const m = dividers[dividers.length - 1].textContent.match(/\d{4}/);
       if (m) currentYear = m[0];
     }
     if (currentYear) setActiveYear(currentYear);
