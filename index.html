@@ -3157,6 +3157,7 @@
   }
 
   let scrollScheduled = false;
+  let scrollEndTimer = null;
   window.addEventListener('scroll', () => {
     if (!scrollScheduled) {
       scrollScheduled = true;
@@ -3165,6 +3166,9 @@
         scrollScheduled = false;
       });
     }
+    // 高速スクロール時、最終位置を確実にキャッチするためのフォールバック
+    if (scrollEndTimer) clearTimeout(scrollEndTimer);
+    scrollEndTimer = setTimeout(updateActiveYear, 120);
   }, { passive: true });
   updateActiveYear();
 
