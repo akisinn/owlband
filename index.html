@@ -3161,6 +3161,18 @@
     });
   }
 
+  // details の開閉でレイアウト（年区切りの位置）が変わるので再キャッシュ
+  let toggleDebounce = null;
+  document.querySelectorAll('details').forEach(d => {
+    d.addEventListener('toggle', () => {
+      if (toggleDebounce) clearTimeout(toggleDebounce);
+      toggleDebounce = setTimeout(() => {
+        cacheDividerPositions();
+        updateActiveYear();
+      }, 80);
+    });
+  });
+
   function setActiveYear(yearText) {
     if (yearText === lastActiveYear) return;
     lastActiveYear = yearText;
