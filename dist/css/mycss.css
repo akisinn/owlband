@@ -563,8 +563,8 @@ header h1 {
 
 .year-nav {
   background: #ffffff;
-  border-bottom: 1px solid #e5e5e5;
-  padding: 8px 0;
+  border-bottom: 1px solid #1a1a1a;
+  padding: 10px 0;
   position: sticky;
   top: 0;
   z-index: 100;
@@ -573,40 +573,45 @@ header h1 {
 .year-nav .container {
   display: flex;
   flex-direction: column;
-  gap: 5px;
+  gap: 8px;
 }
 
 .year-links-wrap {
   display: flex;
-  align-items: center;
-  gap: 4px;
+  align-items: stretch;
+  gap: 6px;
   min-width: 0;
 }
 
+/* スクロール矢印ボタン（◀ ▶） */
 .year-scroll-btn {
   flex-shrink: 0;
-  background: #fff;
-  border: 1px solid #ddd;
-  border-radius: 3px;
-  color: #888;
-  font-size: 1.5em;
+  background: #ffffff;
+  border: 1.5px solid #1a1a1a;
+  border-radius: 0;
+  color: #1a1a1a;
+  font-size: 0.9em;
   line-height: 1;
-  padding: 2px 8px;
+  padding: 0 10px;
   cursor: pointer;
-  transition: background 0.15s, color 0.15s, border-color 0.15s;
+  transition: background 0.18s ease, color 0.18s ease;
   font-family: inherit;
+  font-weight: bold;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .year-scroll-btn:hover {
   background: #1a1a1a;
-  color: #fff;
-  border-color: #1a1a1a;
+  color: #ffffff;
 }
 
+/* 年リンクのコンテナ */
 .year-links {
   display: flex;
   flex-wrap: nowrap;
-  gap: 4px;
+  gap: 0;
   overflow-x: auto;
   -webkit-overflow-scrolling: touch;
   scrollbar-width: none;
@@ -614,51 +619,72 @@ header h1 {
   mask-image: linear-gradient(to right, transparent, black 8px, black calc(100% - 8px), transparent);
   flex: 1;
   min-width: 0;
+  border: 1.5px solid #1a1a1a;
 }
 
 .year-links::-webkit-scrollbar {
   display: none;
 }
 
+/* 年リンク：隣接する枠線を共有してシームレスに */
+.year-links a {
+  flex-shrink: 0;
+  border: none;
+  border-right: 1px solid #1a1a1a;
+  background: transparent;
+  font-size: 0.82em;
+  font-weight: 600;
+  color: #1a1a1a;
+  padding: 6px 12px;
+  text-decoration: none;
+  letter-spacing: 0.04em;
+  transition: background 0.15s ease, color 0.15s ease;
+  font-variant-numeric: tabular-nums;
+}
+
+.year-links a:last-child {
+  border-right: none;
+}
+
+.year-links a:hover {
+  background: #1a1a1a;
+  color: #ffffff;
+}
+
+.year-links a.active {
+  background: #1a1a1a;
+  color: #ffffff;
+}
+
+/* ナビゲーションアクション（全部開く・閉じる・トップへ・最後へ） */
 .nav-actions {
   display: flex;
   flex-wrap: nowrap;
-  gap: 4px;
+  gap: 6px;
 }
 
 .nav-actions a,
 .nav-actions button {
   flex: 1;
   text-align: center;
-}
-
-.year-nav a,
-.year-nav button,
-.year-nav .nav-btn {
-  font-size: 0.8em;
-  color: #888;
-  padding: 3px 8px;
-  border-radius: 3px;
-  border: 1px solid #ddd;
-  background: #fff;
+  font-size: 0.82em;
+  color: #1a1a1a;
+  background: #ffffff;
+  border: 1.5px solid #1a1a1a;
+  border-radius: 0;
+  padding: 7px 10px;
   cursor: pointer;
   text-decoration: none;
-  transition: background 0.15s, color 0.15s;
   font-family: inherit;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  transition: background 0.18s ease, color 0.18s ease;
 }
 
-.year-nav a:hover,
-.year-nav button:hover,
-.year-nav .nav-btn:hover {
+.nav-actions a:hover,
+.nav-actions button:hover {
   background: #1a1a1a;
-  color: #fff;
-  border-color: #1a1a1a;
-}
-
-.year-links a.active {
-  background: #1a1a1a;
-  color: #fff;
-  border-color: #1a1a1a;
+  color: #ffffff;
 }
 
 /* footer */
