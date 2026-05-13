@@ -3119,7 +3119,6 @@
     document.documentElement.style.setProperty('--nav-height', yearNav.offsetHeight + 'px');
   }
   updateNavHeight();
-  // year-nav の高さ変化を継続監視（フォント読み込み・レイアウト変化・ウィンドウリサイズに対応）
   if (window.ResizeObserver && yearNav) {
     new ResizeObserver(updateNavHeight).observe(yearNav);
   } else {
@@ -3128,6 +3127,32 @@
       document.fonts.ready.then(updateNavHeight);
     }
   }
+
+  // 年区切りの自然な文書位置をキャッシュ
+  // （sticky 要素は scroll 時に offsetTop / getBoundingClientRect が
+  // stuck 位置を返してしまうため、スクロール前にキャッシュする必要がある）
+  const dividerPositions = new Map();
+  function cacheDividerPositions() {
+    const wasScrolled = window.scrollY > 0;
+    const savedScrollY = window.scrollY;
+    if (wasScrolled) {
+      // 一時的にトップへ戻して正確な位置を取得
+      window.scrollTo({ top: 0, behavior: 'instant' });
+    }
+    document.querySelectorAll('.year-divider').forEach(d => {
+      if (d.id) dividerPositions.set(d.id, d.offsetTop);
+    });
+    if (wasScrolled) {
+      window.scrollTo({ top: savedScrollY, behavior: 'instant' });
+    }
+  }
+  cacheDividerPositions();
+  // リサイズ時に再キャッシュ
+  let resizeCacheTimer = null;
+  window.addEventListener('resize', () => {
+    if (resizeCacheTimer) clearTimeout(resizeCacheTimer);
+    resizeCacheTimer = setTimeout(cacheDividerPositions, 300);
+  });
 
   function setActiveYear(yearText) {
     if (yearText === lastActiveYear) return;
@@ -3157,9 +3182,9 @@
     // デフォルトを最初の年に
     let currentYear = (dividers[0].textContent.match(/\d{4}/) || [])[0] || null;
     dividers.forEach(divider => {
-      // sticky の影響を受けない自然な文書位置を使う
-      // （Brave 等では sticky 要素が unstick せず getBoundingClientRect が誤った値を返すことがある）
-      const naturalDocTop = divider.offsetTop;
+      // キャッシュされた自然な文書位置を使う（sticky の影響を回避）
+      const cached = dividerPositions.get(divider.id);
+      const naturalDocTop = cached !== undefined ? cached : divider.offsetTop;
       const positionInViewport = naturalDocTop - scrollY;
       if (positionInViewport <= triggerY) {
         const m = divider.textContent.match(/\d{4}/);
@@ -3200,8 +3225,25 @@
     setTimeout(updateActiveYear, 350);
   });
 
-  // 保険3: ナビゲーション内のリンククリック後に再評価
-  document.querySelectorAll('.nav-actions a, .year-links a').forEach(a => {
+  // 年リンク：sticky 要素への scrollIntoView は挙動が不安定なので、
+  // キャッシュされた自然な文書位置から手動で計算してスクロール
+  document.querySelectorAll('.year-links a').forEach(a => {
+    a.addEventListener('click', (e) => {
+      const targetId = a.getAttribute('href').slice(1);
+      if (dividerPositions.has(targetId)) {
+        e.preventDefault();
+        const navHeight = parseInt(getComputedStyle(document.documentElement).getPropertyValue('--nav-height')) || 96;
+        const targetY = Math.max(0, dividerPositions.get(targetId) - navHeight);
+        window.scrollTo(0, targetY);
+        history.replaceState(null, '', '#' + targetId);
+      }
+      setTimeout(updateActiveYear, 100);
+      setTimeout(updateActiveYear, 500);
+    });
+  });
+
+  // トップへ・最後へ：クリック後のアクティブ年再評価
+  document.querySelectorAll('.nav-actions a').forEach(a => {
     a.addEventListener('click', () => {
       setTimeout(updateActiveYear, 50);
       setTimeout(updateActiveYear, 350);
