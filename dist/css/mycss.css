@@ -30,7 +30,7 @@ a {
 section {
   padding: 12px 0;
   background: #fff;
-  scroll-margin-top: 112px;
+  scroll-margin-top: var(--nav-height, 112px);
 }
 
 /* グリッドレイアウト：日付列 + コンテンツ列 */
@@ -228,7 +228,8 @@ section.l .tl-body ul:not(.head) {
 
 .year-divider {
   position: sticky;
-  top: 68px;
+  top: var(--nav-height, 68px);
+  scroll-margin-top: var(--nav-height, 68px);
   z-index: 50;
   background: #1a1a1a;
   border-top: none;
@@ -740,11 +741,11 @@ footer {
   }
 
   section {
-    scroll-margin-top: 112px;
+    scroll-margin-top: var(--nav-height, 112px);
   }
 
   .year-divider {
-    top: 68px;
+    top: var(--nav-height, 68px);
   }
 
   /* 年ナビ：横スクロール1行に */
